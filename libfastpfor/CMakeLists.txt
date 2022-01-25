@@ -46,7 +46,13 @@ set ( GNUC_CXX "$<OR:${GNUCXX},${GNUC}>" )
 add_library ( FastPFOR STATIC ${FastPFOR_SRCS} )
 target_include_directories ( FastPFOR PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>$<INSTALL_INTERFACE:include/fastpfor> )
 target_compile_options ( FastPFOR PUBLIC $<$<COMPILE_LANG_AND_ID:CXX,MSVC>:-D_CRT_SECURE_NO_WARNINGS -wd4267 -wd4244> )
-target_compile_options ( FastPFOR PRIVATE $<${GNUC_CXX}:-msse4.1> )
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+  target_compile_options ( FastPFOR PRIVATE $<${GNUC_CXX}:-DSIMDE_ENABLE_NATIVE_ALIASES -D__ARM_NEON__ -D__arm__> )
+  target_compile_options ( FastPFOR PRIVATE $<${GNUC}:-DSIMDE_ENABLE_NATIVE_ALIASES -D__ARM_NEON__ -D__arm__> )
+else ()
+  target_compile_options ( FastPFOR PRIVATE $<${GNUC_CXX}:-msse4.1> )
+endif()
+
 
 if (PIC) # provide position-independent flag from outside when configuring
 	set_property ( TARGET FastPFOR PROPERTY POSITION_INDEPENDENT_CODE TRUE )

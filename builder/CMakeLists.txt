@@ -36,5 +36,10 @@ target_link_libraries ( builder PRIVATE FastPFOR::FastPFOR columnar_root )
 get_target_property ( pic columnar_root INTERFACE_POSITION_INDEPENDENT_CODE )
 set_property ( TARGET builder PROPERTY POSITION_INDEPENDENT_CODE ${pic} )
 
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+  target_compile_options ( builder PRIVATE $<${GNUC_CXX}:-DSIMDE_ENABLE_NATIVE_ALIASES -D__ARM_NEON__ -D__arm__> )
+  target_compile_options ( builder PRIVATE $<${GNUC}:-DSIMDE_ENABLE_NATIVE_ALIASES -D__ARM_NEON__ -D__arm__> )
+endif()
+
 target_include_directories ( builder INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
 

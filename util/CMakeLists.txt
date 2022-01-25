@@ -34,6 +34,11 @@ include ( CheckFunctionExists )
 check_function_exists ( pread HAVE_PREAD )
 set_source_files_properties ( reader.cpp PROPERTIES COMPILE_DEFINITIONS HAVE_PREAD=${HAVE_PREAD} )
 
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64")
+  target_compile_options ( util PUBLIC $<${GNUC_CXX}:-DSIMDE_ENABLE_NATIVE_ALIASES -march=armv8-a+crc -D__ARM_NEON__ -D__arm__> )
+  target_compile_options ( util PUBLIC $<${GNUC}:-DSIMDE_ENABLE_NATIVE_ALIASES -march=armv8-a+crc -D__ARM_NEON__ -D__arm__> )
+endif()
+
 target_link_libraries ( util PRIVATE FastPFOR::FastPFOR columnar_root)
 
 # runaround - POSITION_INDEPENDENT_CODE must be transitive from columnar_root, but it doesn't work (a bug in cmake?)

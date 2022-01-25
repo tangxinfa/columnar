@@ -19,8 +19,10 @@
 
 #if _WIN32
 	#include "intrin.h"
+#elif defined(__ARM_NEON__)
+    #include <simde/x86/sse2.h>
 #else
-	#include <x86intrin.h>
+    #include <x86intrin.h>
 #endif
 
 #include "deltautil.h"
